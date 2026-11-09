@@ -20,8 +20,8 @@ CREATE POLICY "用户更新自己的信息" ON users FOR UPDATE USING (auth.uid(
 -- 商品表策略
 -- 允许所有人查看商品
 CREATE POLICY "允许查看商品" ON products FOR SELECT USING (is_active = true);
--- 允许管理员管理商品（这里简化处理，实际应该检查用户角色）
-CREATE POLICY "允许管理商品" ON products FOR ALL USING (auth.uid() IS NOT NULL);
+-- 商品写操作由服务端 service_role 执行，客户端不具备写权限
+CREATE POLICY "允许管理商品" ON products FOR ALL USING (false) WITH CHECK (false);
 
 -- 购物车表策略
 -- 用户只能管理自己的购物车
@@ -65,7 +65,7 @@ GRANT INSERT ON users TO anon;
 GRANT UPDATE ON users TO authenticated;
 
 GRANT SELECT ON products TO anon, authenticated;
-GRANT ALL ON products TO authenticated;
+GRANT SELECT ON products TO authenticated;
 
 GRANT ALL ON cart_items TO authenticated;
 
